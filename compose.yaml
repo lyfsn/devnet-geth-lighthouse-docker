@@ -1,38 +1,30 @@
 version: "3.8"
 
 services:
-  executor:
-    image: ethereum/client-go:v1.13.4
+  execution:
+    image: nethermind/nethermind:latest
     command:
-      - --networkid=28256
-      - --state.scheme=path
-      - --verbosity=3
+      - --log=INFO
       - --datadir=/execution-data
-      - --http
-      - --http.addr=0.0.0.0
-      - --http.vhosts=*
-      - --http.corsdomain=*
-      - --http.api=admin,engine,net,eth,web3,debug
-      - --ws
-      - --ws.addr=0.0.0.0
-      - --ws.port=8546
-      - --ws.api=admin,engine,net,eth,web3,debug
-      - --ws.origins=*
-      - --allow-insecure-unlock
-      - --nat=extip:${IP_ADDRESS}
-      - --verbosity=3
-      - --authrpc.port=8551
-      - --authrpc.addr=0.0.0.0
-      - --authrpc.vhosts=*
-      - --authrpc.jwtsecret=/el-cl-genesis-data/jwt/jwtsecret
-      - --syncmode=full
-      - --rpc.allow-unprotected-txs
-      - --metrics
-      - --metrics.addr=0.0.0.0
-      - --metrics.port=9001
-      - --port=50403
-      - --networkid=28256
-      - --bootnodes=enode://de18715ae94d2545c70f396feadf3d88da1bb0ad1a845c2b1f6d98f1075ec4c05651f0fb4388f2c256731590636a799243b7d25839848add1efffd1eecf7edf2@88.99.94.109:50303
+      - --Init.ChainSpecPath=/el-cl-genesis-data/custom_config_data/chainspec.json
+      - --Init.WebSocketsEnabled=true
+      - --Init.KzgSetupPath=/el-cl-genesis-data/custom_config_data/trusted_setup.txt
+      - --config=none.cfg
+      - --JsonRpc.Enabled=true
+      - --JsonRpc.EnabledModules=net,eth,consensus,subscribe,web3,admin
+      - --JsonRpc.Host=0.0.0.0
+      - --JsonRpc.Port=8545
+      - --JsonRpc.WebSocketsPort=8546
+      - --JsonRpc.EngineHost=0.0.0.0
+      - --JsonRpc.EnginePort=8551
+      - --Network.ExternalIp=${IP_ADDRESS}
+      - --Network.DiscoveryPort=50403
+      - --Network.P2PPort=50403
+      - --JsonRpc.JwtSecretFile=/el-cl-genesis-data/jwt/jwtsecret
+      - --Network.OnlyStaticPeers=true
+      - --Metrics.Enabled=true
+      - --Metrics.ExposePort=9001
+      - --Network.StaticPeers=enode://30674d1f5fa3cf763c2d991eeaf585db42c45737a4d47aee3653b50ac33947437769e13f04c12bab63d5c2a416d08b2637e6340d13b7d59489f0ac8dae919756@88.99.94.109:50303
     volumes:
       - ./execution-data:/execution-data
       - ./el-cl-genesis-data:/el-cl-genesis-data
@@ -46,6 +38,7 @@ services:
 
   beacon:
     image: sigp/lighthouse:v4.5.0
+    user: "root"
     command:
       - lighthouse
       - beacon_node
@@ -64,7 +57,7 @@ services:
       - --http-allow-sync-stalled
       - --slots-per-restore-point=32
       - --disable-packet-filter
-      - --execution-endpoints=http://executor:8551
+      - --execution-endpoints=http://execution:8551
       - --jwt-secrets=/el-cl-genesis-data/jwt/jwtsecret
       - --suggested-fee-recipient=0x8943545177806ED17B9F23F0a21ee5948eCaa776
       - --subscribe-all-subnets
@@ -72,8 +65,8 @@ services:
       - --metrics-address=0.0.0.0
       - --metrics-allow-origin=*
       - --metrics-port=5054
-      - --trusted-peers=16Uiu2HAkxAjbNY3VD7fS4w3f6pfk2dnKiAPr6tDQtd2vvUmEX54L
-      - --boot-nodes=enr:-MS4QDAfdwdv39sNGp4RhwyabW-n-bNHMFgjgrPsImZKfibtQAGKg85CqmVKg_jvA7r_7C75tu7lv7CDASsQwboc9QYBh2F0dG5ldHOIAAAAAAAAAACEZXRoMpAjvkwgQAAAOP__________gmlkgnY0gmlwhFhjXm2EcXVpY4Iq-YlzZWNwMjU2azGhAii_bzHcO9ydFheDTk140o6hvL0tnMTd89PPGnINuuORiHN5bmNuZXRzAIN0Y3CCKviDdWRwgir4
+      - --trusted-peers=16Uiu2HAm4GXc2aYZkdfHvvn56s6zEdoSAwdiNcGkzvXX5y4MX4U4
+      - --boot-nodes=enr:-MS4QKjvQWjHjNSlrgJBnwI7j88ULp36kH6FegWreBuiHL0_UGs4EvAxALKLgvKjTFpk6x0zTPyxoXXt0PDeZxlAihgBh2F0dG5ldHOIAAAAAAAAAACEZXRoMpAjvkwgQAAAOP__________gmlkgnY0gmlwhFhjXm2EcXVpY4Iq-YlzZWNwMjU2azGhAoNhfDA57peBhfKlgRRDYKmjwOUPSPqj97hpWmwycgJdiHN5bmNuZXRzAIN0Y3CCKviDdWRwgir4
       - --checkpoint-sync-url=http://88.99.94.109:9781
       - --disable-optimistic-finalized-sync
       - --disable-backfill-rate-limiting
@@ -84,12 +77,12 @@ services:
       - ./consensus-data:/consensus-data 
       - ./el-cl-genesis-data:/el-cl-genesis-data
     ports:
-      - "11100:11100/udp"
-      - "11100:11100/tcp" 
-      - "4300:4000"
-      - "7154:5054"
+      - "11200:11100/udp"
+      - "11200:11100/tcp" 
+      - "4400:4000"
+      - "7254:5054"
     depends_on:
-      - executor
+      - execution
     restart: unless-stopped
 
   # lighthouse-validator:
