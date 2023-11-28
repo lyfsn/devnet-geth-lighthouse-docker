@@ -78,10 +78,10 @@ services:
       - ./consensus-data:/consensus-data 
       - ./el-cl-genesis-data:/el-cl-genesis-data
     ports:
-      - "11200:11100/udp"
-      - "11200:11100/tcp" 
-      - "4400:4000"
-      - "7254:5054"
+      - "11100:11100/udp"
+      - "11100:11100/tcp" 
+      - "4300:4000"
+      - "7354:5054"
     depends_on:
       - execution
     restart: unless-stopped
