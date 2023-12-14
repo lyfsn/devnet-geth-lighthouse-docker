@@ -75,9 +75,7 @@ services:
       - --metrics-allow-origin=*
       - --metrics-port=5054
       - --trusted-peers=16Uiu2HAm4GXc2aYZkdfHvvn56s6zEdoSAwdiNcGkzvXX5y4MX4U4
-      - >
-        --boot-nodes=/ip4/88.99.94.109/tcp/11000/p2p/16Uiu2HAm4GXc2aYZkdfHvvn56s6zEdoSAwdiNcGkzvXX5y4MX4U4,
-        /ip4/88.99.94.109/tcp/11100/p2p/16Uiu2HAm9Xpd6oiTaETf8iXSYgRxmYB1kcUrPbpSSr9Fw6GKntEY
+      - --boot-nodes=/ip4/88.99.94.109/tcp/11000/p2p/16Uiu2HAm4GXc2aYZkdfHvvn56s6zEdoSAwdiNcGkzvXX5y4MX4U4
       - --target-peers=16
       - --checkpoint-sync-url=http://88.99.94.109:9781
       - --disable-optimistic-finalized-sync
