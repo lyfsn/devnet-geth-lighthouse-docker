@@ -13,6 +13,7 @@ services:
       - --http.vhosts=*
       - --http.corsdomain=*
       - --http.api=admin,engine,net,eth,web3,debug
+      - --http.port=8545
       - --ws
       - --ws.addr=0.0.0.0
       - --ws.port=8546
@@ -32,7 +33,7 @@ services:
       - --metrics.port=9001
       - --port=50403
       - --discovery.port=50403
-      - --bootnodes=enode://30674d1f5fa3cf763c2d991eeaf585db42c45737a4d47aee3653b50ac33947437769e13f04c12bab63d5c2a416d08b2637e6340d13b7d59489f0ac8dae919756@88.99.94.109:50303
+      - --bootnodes=enode://30674d1f5fa3cf763c2d991eeaf585db42c45737a4d47aee3653b50ac33947437769e13f04c12bab63d5c2a416d08b2637e6340d13b7d59489f0ac8dae919756@88.99.94.109:50303?discport=50303
     volumes:
       - ./execution-data:/execution-data
       - ./el-cl-genesis-data:/el-cl-genesis-data
